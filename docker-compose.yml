@@ -1,0 +1,39 @@
+# версия docker-compose (не обязательно)
+version: "3.8"
+
+# желательно использовать образы на дистрибутиве alpine для экономии места
+
+# раздел описания сервисов
+services:
+
+  # имя сервиса
+  web:
+    # путь к файлу Dockerfile
+    build: .
+    # команда запуска сервиса
+    command: sh -c "alembic upgrade head & uvicorn app:app --reload --host 0.0.0.0 --port 8000"
+    # точка монтирования для хранения информации
+    volumes:
+      - .:/app
+    # проброс портов (port forwarding)
+    ports:
+      - "8000:8000"
+    # проброс переменных окружения в сервис
+    #    environment:
+    #      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
+    # зависимости сервиса
+    depends_on:
+      - db
+
+
+  db:
+    #    container_name: autoservice_db
+    # образ для сервиса
+    image: postgres:15-alpine3.18
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 15239:5432
