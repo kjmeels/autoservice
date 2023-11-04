@@ -5,29 +5,17 @@ from sqlalchemy import select
 from starlette import status
 
 from .router import router
-# from ...models import Car, Detail, Feedback, Person, Promotion, Service
-from ...models.cars import Car
-from ...models.details import Detail
-from ...models.feedbacks import Feedback
-from ...models.personal import Person
-from ...models.promotions import Promotion
-from ...models.services import Service
-# from ...schemas import (
-#     CarSchema,
-#     InfoSchema,
-#     PersonalListSchema,
-#     DetailSchema,
-#     PromotionSchema,
-#     FeedbackSchema,
-#     ServiceSchema
-# )
-from ...schemas.cars import CarSchema
-from ...schemas.details import DetailSchema
-from ...schemas.feedbacks import FeedbackSchema
-from ...schemas.main_info import InfoSchema
-from ...schemas.personal import PersonalListSchema
-from ...schemas.promotions import PromotionSchema
-from ...schemas.services import ServiceSchema
+from ...models import Car, Detail, Feedback, Person, Promotion, Service
+from ...schemas import (
+    CarSchema,
+    InfoSchema,
+    PersonalListSchema,
+    DetailSchema,
+    PromotionSchema,
+    FeedbackSchema,
+    ServiceSchema
+)
+
 
 info_json = {
     "name": "Autoservice Name",
