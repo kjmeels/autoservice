@@ -14,29 +14,29 @@ class CarSchema(BaseModel):
     #     title="Type",
     # )
 
-    car_brand: str = Field(
+    brand: str = Field(
         max_length=64,
         title="Brand",
     )
-    car_model: str = Field(
+    model: str = Field(
         max_length=64,
         title="Model",
     )
-    car_engine_type: str = Field(
+    engine_type: str = Field(
         max_length=64,
         title="Engine type",
     )
-    car_drive_type: str = Field(
+    drive_type: str = Field(
         max_length=64,
         title="Drive type",
     )
 
-    car_year_of_production: Optional[PositiveInt] = Field(
+    year_of_production: Optional[PositiveInt] = Field(
         title="Year",
         description="Year of car",
     )
 
-    car_vin: Optional[PositiveInt] = Field(
+    vin: Optional[PositiveInt] = Field(
         title="VIN",
         description="VIN code of car",
     )
@@ -49,12 +49,11 @@ class CarSchema(BaseModel):
             "example": {
                 "id": 1,
                 # "transport_category": "car",
-                "car_brand": "BMW",
-                "car_model": "318i",
-                "car_engine_type": "petrol",
-                "car_drive_type": "automatic",
-                "car_year_of_production": 2009,
-                "car_vin": 12345678,
-
+                "brand": "BMW",
+                "model": "318i",
+                "engine_type": "petrol",
+                "drive_type": "automatic",
+                "year_of_production": 2009,
+                "vin": 12345678,
             }
         }

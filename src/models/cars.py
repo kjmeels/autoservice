@@ -15,4 +15,4 @@ class Car(Base):
     year_of_production = Column(INT, nullable=False)
     vin = Column(INT, nullable=False)
 
-    # details: Mapped[List[INT]] = relationship()
+    details: Mapped[List["Detail"]] = relationship()

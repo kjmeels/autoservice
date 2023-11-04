@@ -67,12 +67,12 @@ async def cars_list():
         cars = await session.scalars(select(Car).order_by(Car.id.asc()))
         return [CarSchema(
             id=car.id,
-            car_brand=car.car_brand,
-            car_model=car.car_model,
-            car_engine_type=car.car_engine_type,
-            car_drive_type=car.car_drive_type,
-            car_year_of_production=car.car_year_of_production,
-            car_vin=car.car_vin,
+            brand=car.brand,
+            model=car.model,
+            engine_type=car.engine_type,
+            drive_type=car.drive_type,
+            year_of_production=car.year_of_production,
+            vin=car.vin,
         ) for car in cars.all()]
 
 
@@ -89,12 +89,12 @@ async def add_car(car: CarSchema):
             await session.refresh(car)
             return CarSchema(
                 id=car.id,
-                car_brand=car.brand,
-                car_model=car.model,
-                car_engine_type=car.engine_type,
-                car_drive_type=car.drive_type,
-                car_year_of_production=car.year_of_production,
-                car_vin=car.vin,
+                brand=car.brand,
+                model=car.model,
+                engine_type=car.engine_type,
+                drive_type=car.drive_type,
+                year_of_production=car.year_of_production,
+                vin=car.vin,
             )
 
 
@@ -108,6 +108,7 @@ async def details_list():
             model=detail.model,
             price=detail.price,
             is_available=detail.is_available,
+            car_id=detail.car_id,
         ) for detail in details.all()]
 
 
@@ -128,6 +129,7 @@ async def add_detail(detail: DetailSchema):
                 model=detail.model,
                 price=detail.price,
                 is_available=detail.is_available,
+                car_id=detail.car_id,
             )
 
 

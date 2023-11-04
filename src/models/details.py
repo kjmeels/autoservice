@@ -10,5 +10,5 @@ class Detail(Base):
     model = Column(VARCHAR(64), nullable=False)
     price = Column(INT, nullable=False)
     is_available = Column(BOOLEAN, server_default="f")
-    # car_id = Column(INT, ForeignKey("car.id", ondelete="CASCADE"), nullable=False)
-    # car = relationship("Car", back_populates="details")
+    car_id = Column(INT, ForeignKey("car.id", ondelete="CASCADE"), nullable=False)
+    car = relationship("Car", back_populates="details")

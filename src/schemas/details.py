@@ -29,14 +29,20 @@ class DetailSchema(BaseModel):
 
     )
 
+    car_id:  Optional[PositiveInt] = Field(
+        title="Car",
+        description="car that equipped with this detail"
+    )
+
     class Config:
         title = "Details"
         json_schema_extra = {
             "example": {
                 "id": 1,
-                "detail_category": "new",
-                "detail_model": "AB7",
-                "detail_price": 200.0,
+                "category": "new",
+                "model": "AB7",
+                "price": 200.0,
                 "is_available": True,
+                "car_id": 1,
             }
         }
