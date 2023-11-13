@@ -15,24 +15,22 @@ class FeedbackSchema(BaseModel):
         dicriptions="user, who wrote comment",
     )
 
-    feedback_text: str = Field(
+    text: str = Field(
         title="comment",
         max_length=64,
     )
 
-    feedback_date: datetime = Field(
+    date: datetime = Field(
         title="Feedback date",
     )
 
     class Config:
-        json_dumps = ujson.dumps
-        json_loads = ujson.loads
         title = "Feedbacks"
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "user_name": "Misha",
-                "feedback_text": "Good service! Good personal! Nice promotions!",
-                "feedback_date": "2023-11-28",
+                "text": "Good service! Good personal! Nice promotions!",
+                "date": "2023-11-28",
             }
         }

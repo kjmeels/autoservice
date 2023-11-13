@@ -15,7 +15,7 @@ from ...schemas import (
     FeedbackSchema,
     ServiceSchema
 )
-
+from ...schemas.personal import PersonDeleteSchema
 
 info_json = {
     "name": "Autoservice Name",
@@ -59,6 +59,22 @@ async def add_person(person: PersonalListSchema):
                 surname=person.surname,
                 email=person.email,
             )
+
+
+@router.delete("/delete_person/{person_id}", tags=["Personal"], name="delete person")
+async def delete_person(person_id: int):
+    async with Person.async_session() as session:
+        person = await session.scalars(select(Person).where(Person.id == person_id))
+        if person:
+            session.delete(person)
+            session.commit()
+            try:
+                await session.commit()
+            except InterruptedError:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="person doesn't deleted")
+            return {"status": "OK"}
+        else:
+            return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="person does not exist")
 
 
 @router.get("/cars", response_model=List[CarSchema], tags=["Cars"], name="cars_list")
@@ -171,8 +187,8 @@ async def feedbacks_list():
         return [FeedbackSchema(
             id=feedback.id,
             user_name=feedback.user_name,
-            feedback_text=feedback.feedback_text,
-            feedback_date=feedback.feedback_date,
+            feedback_text=feedback.text,
+            feedback_date=feedback.date,
         ) for feedback in feedbacks.all()]
 
 
@@ -200,9 +216,9 @@ async def services_list():
     async with Service.async_session() as session:
         services = await session.scalars(select(Service).order_by(Service.id.asc()))
         return [ServiceSchema(
-            service_id=service.service_id,
-            service_name=service.service_name,
-            service_price=service.service_price,
+            service_id=service.id,
+            service_name=service.name,
+            service_price=service.price,
         ) for service in services.all()]
 
 

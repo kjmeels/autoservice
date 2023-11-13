@@ -29,10 +29,8 @@ class InfoSchema(BaseModel):
     )
 
     class Config:
-        json_dumps = ujson.dumps
-        json_loads = ujson.loads
         title = "Info"
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "Autoservice Name",
                 "address": "Mayakovskogo 28a",

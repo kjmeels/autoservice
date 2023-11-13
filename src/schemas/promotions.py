@@ -24,10 +24,8 @@ class PromotionSchema(BaseModel):
     )
 
     class Config:
-        json_dumps = ujson.dumps
-        json_loads = ujson.loads
         title = "Promotions"
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "type_of_promotion": "repost",
                 "discount_percentage": 10,

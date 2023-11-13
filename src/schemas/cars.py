@@ -42,13 +42,10 @@ class CarSchema(BaseModel):
     )
 
     class Config:
-        json_dumps = ujson.dumps
-        json_loads = ujson.loads
         title = "Cars"
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
-                # "transport_category": "car",
                 "brand": "BMW",
                 "model": "318i",
                 "engine_type": "petrol",

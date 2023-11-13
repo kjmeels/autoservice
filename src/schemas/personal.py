@@ -4,6 +4,20 @@ from pydantic import BaseModel, Field, root_validator, EmailStr
 from pydantic.types import PositiveInt
 
 
+class PersonDeleteSchema(BaseModel):
+    id: Optional[PositiveInt] = Field(
+        title="ID",
+    )
+
+    class Config:
+        title = "Person"
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+            }
+        }
+
+
 class PersonalListSchema(BaseModel):
     id: Optional[PositiveInt] = Field(
         title="ID",
@@ -31,7 +45,7 @@ class PersonalListSchema(BaseModel):
 
     class Config:
         title = "Person"
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "name": "Ivan",
@@ -39,4 +53,3 @@ class PersonalListSchema(BaseModel):
                 "email": "ivanov@mail.ru"
             }
         }
-
