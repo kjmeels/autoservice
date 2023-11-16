@@ -31,6 +31,6 @@ class FeedbackSchema(BaseModel):
                 "id": 1,
                 "user_name": "Misha",
                 "text": "Good service! Good personal! Nice promotions!",
-                "date": "2023-11-28",
+                "date": "2023-05-05 23:00",
             }
         }

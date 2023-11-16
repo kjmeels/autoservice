@@ -1,11 +1,11 @@
 from typing import List
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from starlette import status
 
 from .router import router
-from ...models import Car, Detail, Feedback, Person, Promotion, Service
+from ...models import Car, Detail, Feedback, Person, Promotion, Service, Info
 from ...schemas import (
     CarSchema,
     InfoSchema,
@@ -15,19 +15,51 @@ from ...schemas import (
     FeedbackSchema,
     ServiceSchema
 )
-from ...schemas.personal import PersonDeleteSchema
-
-info_json = {
-    "name": "Autoservice Name",
-    "address": "Mayakovskogo 28a",
-    "phone_number": "+375445214785",
-    "email": "Autoservice@mail.ru"
-}
 
 
-@router.get("/info", response_model=InfoSchema, tags=["Info"], name="info_list")
-async def service_info():
-    return InfoSchema(**info_json)
+# info_json = {
+#     "name": "Autoservice Name",
+#     "address": "Mayakovskogo 28a",
+#     "phone_number": "+375445214785",
+#     "email": "Autoservice@mail.ru"
+# }
+#
+#
+# @router.get("/info", response_model=InfoSchema, tags=["Info"], name="info_list")
+# async def service_info():
+#     return InfoSchema(**info_json)
+
+# @router.post("/add_info", response_model=InfoSchema, tags=["Info"], name="info")
+# async def add_info(info: InfoSchema):
+#     async with Info.async_session() as session:
+#         info = await session.scalars(select(Info).limit(1))
+#         if info:
+#             session.refresh(info)  # .persist(info)/refresh
+#             try:
+#                 await session.commit()
+#             except InterruptedError:
+#                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="info doesn't rewrite")
+#             return {"status": "OK"}
+#         else:
+#             await session.add(info)
+#             try:
+#                 await session.commit()
+#             except InterruptedError:
+#                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="info doesn't added")
+#             return info
+#
+#
+# @router.get("/info", response_model=List[InfoSchema], tags=["Info"], name="info")
+# async def service_info():
+#     async with Info.async_session() as session:
+#         infos = await session.scalars(select(Info).order_by(Info.id.asc()))
+#         return [InfoSchema(
+#             id=info.id,
+#             name=info.name,
+#             address=info.address,
+#             phone_number=info.phone_number,
+#             email=info.email,
+#         ) for info in infos.all()]
 
 
 @router.get("/personal", response_model=List[PersonalListSchema], tags=["Personal"], name="personal_list")
@@ -64,17 +96,12 @@ async def add_person(person: PersonalListSchema):
 @router.delete("/delete_person/{person_id}", tags=["Personal"], name="delete person")
 async def delete_person(person_id: int):
     async with Person.async_session() as session:
-        person = await session.scalars(select(Person).where(Person.id == person_id))
-        if person:
-            session.delete(person)
-            session.commit()
-            try:
-                await session.commit()
-            except InterruptedError:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="person doesn't deleted")
-            return {"status": "OK"}
-        else:
-            return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="person does not exist")
+        person = await session.execute(delete(Person).where(Person.id == person_id))
+        try:
+            await session.commit()
+        except InterruptedError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="person doesn't deleted")
+        return {"status": "OK"}
 
 
 @router.get("/cars", response_model=List[CarSchema], tags=["Cars"], name="cars_list")
@@ -114,6 +141,17 @@ async def add_car(car: CarSchema):
             )
 
 
+@router.delete("/delete_car/{car_id}", tags=["Cars"], name="delete car")
+async def delete_car(car_id: int):
+    async with Car.async_session() as session:
+        car = await session.execute(delete(Car).where(Car.id == car_id))
+        try:
+            await session.commit()
+        except InterruptedError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="car doesn't deleted")
+        return {"status": "OK"}
+
+
 @router.get("/details", response_model=List[DetailSchema], tags=["Details"], name="details_list")
 async def details_list():
     async with Detail.async_session() as session:
@@ -149,13 +187,24 @@ async def add_detail(detail: DetailSchema):
             )
 
 
+@router.delete("/delete_detail/{detail_id}", tags=["Details"], name="delete detail")
+async def delete_detail(detail_id: int):
+    async with Car.async_session() as session:
+        detail = await session.execute(delete(Detail).where(Detail.id == detail_id))
+        try:
+            await session.commit()
+        except InterruptedError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="detail doesn't deleted")
+        return {"status": "OK"}
+
+
 @router.get("/promotions", response_model=List[PromotionSchema], tags=["Promotions"], name="promotions_list")
 async def promotions_list():
     async with Promotion.async_session() as session:
         promotions = await session.scalars(select(Promotion).order_by(Promotion.id.asc()))
         return [PromotionSchema(
-            id_promotion=promotion.id_promotion,
-            type_of_promotion=promotion.type_of_promotion,
+            id=promotion.id,
+            type=promotion.type,
             discount_percentage=promotion.discount_percentage,
             end_date=promotion.end_date,
         ) for promotion in promotions.all()]
@@ -173,11 +222,22 @@ async def add_promotion(promotion: PromotionSchema):
         else:
             await session.refresh(promotion)
             return PromotionSchema(
-                id_promotion=promotion.id,
-                type_of_promotion=promotion.type,
+                id=promotion.id,
+                type=promotion.type,
                 discount_percentage=promotion.discount_percentage,
                 end_date=promotion.end_date,
             )
+
+
+@router.delete("/delete_promotion/{promotion_id}", tags=["Promotions"], name="delete promotion")
+async def delete_promotion(promotion_id: int):
+    async with Promotion.async_session() as session:
+        promotion = await session.execute(delete(Promotion).where(Promotion.id == promotion_id))
+        try:
+            await session.commit()
+        except InterruptedError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="promotion doesn't deleted")
+        return {"status": "OK"}
 
 
 @router.get("/feedbacks", response_model=List[FeedbackSchema], tags=["Feedbacks"], name="feedbacks_list")
@@ -187,8 +247,8 @@ async def feedbacks_list():
         return [FeedbackSchema(
             id=feedback.id,
             user_name=feedback.user_name,
-            feedback_text=feedback.text,
-            feedback_date=feedback.date,
+            text=feedback.text,
+            date=feedback.date,
         ) for feedback in feedbacks.all()]
 
 
@@ -206,9 +266,20 @@ async def add_feedback(feedback: FeedbackSchema):
             return FeedbackSchema(
                 id=feedback.id,
                 user_name=feedback.user_name,
-                feedback_text=feedback.text,
-                feedback_date=feedback.date,
+                text=feedback.text,
+                date=feedback.date,
             )
+
+
+@router.delete("/delete_feedback/{feedback_id}", tags=["Feedbacks"], name="delete feedback")
+async def delete_feedback(feedback_id: int):
+    async with Feedback.async_session() as session:
+        feedback = await session.execute(delete(Feedback).where(Feedback.id == feedback_id))
+        try:
+            await session.commit()
+        except InterruptedError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="feedback doesn't deleted")
+        return {"status": "OK"}
 
 
 @router.get("/services", response_model=List[ServiceSchema], tags=["Services"], name="services_list")
@@ -216,9 +287,9 @@ async def services_list():
     async with Service.async_session() as session:
         services = await session.scalars(select(Service).order_by(Service.id.asc()))
         return [ServiceSchema(
-            service_id=service.id,
-            service_name=service.name,
-            service_price=service.price,
+            id=service.id,
+            name=service.name,
+            price=service.price,
         ) for service in services.all()]
 
 
@@ -234,7 +305,18 @@ async def add_service(service: ServiceSchema):
         else:
             await session.refresh(service)
             return ServiceSchema(
-                service_id=service.id,
-                service_name=service.name,
-                service_price=service.price,
+                id=service.id,
+                name=service.name,
+                price=service.price,
             )
+
+
+@router.delete("/delete_service/{service_id}", tags=["Services"], name="delete service")
+async def delete_service(service_id: int):
+    async with Service.async_session() as session:
+        service = await session.execute(delete(Service).where(Service.id == service_id))
+        try:
+            await session.commit()
+        except InterruptedError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="service doesn't deleted")
+        return {"status": "OK"}

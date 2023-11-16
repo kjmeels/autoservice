@@ -1,9 +1,15 @@
+from typing import Optional
+
 import ujson
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, PositiveInt
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 
 class InfoSchema(BaseModel):
+    id: Optional[PositiveInt] = Field(
+        title="ID",
+    )
+
     name: str = Field(
         ...,  # элепсис - для указания того, что этот аргумент - обязательный
         title="Name",
@@ -32,10 +38,10 @@ class InfoSchema(BaseModel):
         title = "Info"
         json_schema_extra = {
             "example": {
+                "id": 1,
                 "name": "Autoservice Name",
                 "address": "Mayakovskogo 28a",
                 "phone_number": "+375445214785",
                 "email": "Autoservice@mail.ru"
             }
         }
-

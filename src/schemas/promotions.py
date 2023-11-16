@@ -6,11 +6,11 @@ from pydantic import BaseModel, Field, PositiveInt
 
 
 class PromotionSchema(BaseModel):
-    id_promotion: Optional[PositiveInt] = Field(
+    id: Optional[PositiveInt] = Field(
         title="ID",
     )
 
-    type_of_promotion: str = Field(
+    type: str = Field(
         max_length=64,
         title="Type",
     )
@@ -27,7 +27,8 @@ class PromotionSchema(BaseModel):
         title = "Promotions"
         json_schema_extra = {
             "example": {
-                "type_of_promotion": "repost",
+                "id": 1,
+                "type": "repost",
                 "discount_percentage": 10,
                 "end_date": "2023-11-23",
             }
