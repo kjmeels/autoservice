@@ -5,83 +5,15 @@ from sqlalchemy import select, delete
 from starlette import status
 
 from .router import router
-from ...models import Car, Detail, Feedback, Person, Promotion, Service, Info
+from ...models import Car, Detail, Feedback, Person, Promotion, Service
 from ...schemas import (
     CarSchema,
-    InfoSchema,
     PersonalListSchema,
     DetailSchema,
     PromotionSchema,
     FeedbackSchema,
     ServiceSchema
 )
-
-
-# info_json = {
-#     "name": "Autoservice Name",
-#     "address": "Mayakovskogo 28a",
-#     "phone_number": "+375445214785",
-#     "email": "Autoservice@mail.ru"
-# }
-#
-#
-# @router.get("/info", response_model=InfoSchema, tags=["Info"], name="info_list")
-# async def service_info():
-#     return InfoSchema(**info_json)
-
-@router.post("/add_info", response_model=InfoSchema, tags=["Info"], name="info")
-async def add_info(main_info: InfoSchema):
-    # todo
-    async with Info.async_session() as session:
-        info = await session.scalars(select(Info).limit(1))
-        if info:
-            info.name = main_info.name
-            info.address = main_info.address
-            info.phone_number = main_info.phone_number
-            info.email = main_info.email
-            try:
-                await session.commit()
-                await session.refresh(info)  # .persist(info)/refresh
-            except InterruptedError:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="info doesn't rewrite")
-            return {"status": "OK"}
-        else:
-            await session.add(info)
-            try:
-                await session.commit()
-            except InterruptedError:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="info doesn't added")
-            return info
-#
-#
-# @router.get("/info", response_model=List[InfoSchema], tags=["Info"], name="info")
-# async def service_info():
-#     async with Info.async_session() as session:
-#         infos = await session.scalars(select(Info).order_by(Info.id.asc()))
-#         return [InfoSchema(
-#             id=info.id,
-#             name=info.name,
-#             address=info.address,
-#             phone_number=info.phone_number,
-#             email=info.email,
-#         ) for info in infos.all()]
-
-
-# fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
-# @app.put("/items/{item_id}")
-# async def update_item(item_id: int, item: str):
-#     fake_items_db[item_id] = {"item_name": item}
-#     return {"item_id": item_id, "item_name": item}
-# @router.put("/info", response_model=List[InfoSchema], tags=["Info"], name="info")
-# async def update_info(info: InfoSchema):
-#     info = Info(**InfoSchema(**info.dict()).dict())
-#     return [InfoSchema(
-#         id=info.id,
-#         name=info.name,
-#         address=info.address,
-#         phone_number=info.phone_number,
-#         email=info.email,
-#     )]
 
 
 @router.get("/personal", response_model=List[PersonalListSchema], tags=["Personal"], name="personal_list")
